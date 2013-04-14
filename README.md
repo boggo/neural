@@ -41,5 +41,5 @@ network.AddConnection(conn5)
 
 Finally, run the Network
 
-inputs := []float64 {1.234, -5.678}  
-outpus := network.Activate(inputs)
+inputs  := []float64 {1.234, -5.678}  
+outputs := network.Activate(inputs)

@@ -15,12 +15,21 @@ const (
     HIDDEN
 )
 
+// FuncType to identify activation function
+type FuncType byte
+
+const (
+    DIRECT FuncType = iota
+    SIGMOID
+)
+
 // Node interface 
 type Node interface {
     Reset()
     Combine(value float64)
     Activate() float64
     NodeType() NodeType
+    FuncType() FuncType
 }
 
 // List of Nodes
@@ -40,6 +49,7 @@ func (nl nodeList) Swap(i, j int) { nl[i], nl[j] = nl[j], nl[i] }
 type node struct {
     input    float64
     nodeType NodeType
+	funcType FuncType
 }
 
 // Reset a node to its starting value, 0. For Bias nodes, this is 1.
@@ -68,6 +78,24 @@ func (n *node) Combine(value float64) {
 // NodeType returns the NodeType of the Node
 func (n node) NodeType() NodeType {
     return n.nodeType
+}
+
+// FuncType returns the type of activation function
+func (n node) FuncType() FuncType {
+    return n.funcType
+}
+
+// NewNode returns the appropriate Node based on FuncType
+func NewNode(funcType FuncType, nodeType NodeType) Node {
+    switch funcType {
+    case DIRECT:
+        return NewDirectNode(nodeType)
+    case SIGMOID:
+        return NewSigmoidNode(nodeType)
+    }
+	
+	// Unknown FuncType, return nil
+	return nil
 }
 
 // DirectNode is an implemenation of Node which returns its input value without
