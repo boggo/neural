@@ -60,7 +60,7 @@ conn5 := neural.NewConnection(hid1, out1, rand.Float64() * 2 - 1)
 Then pull it all together
 
 ```Go
-network := neural.NewNetwork()
+network := &neural.Network{}      // Create a empty Network
 
 network.AddNode(bias)  
 network.AddNode(in1)  
