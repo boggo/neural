@@ -1,6 +1,7 @@
 package neural
 
 import (
+    "math/rand"
     "sort"
 )
 
@@ -16,8 +17,58 @@ type Network struct {
 }
 
 // Creates a new, empty Network
-func NewNetwork() *Network {
-    return &Network{}
+func NewNetwork(numInput, numHidden, numOutput int) *Network {
+
+    network := &Network{}
+
+    // Add the bias node
+    network.AddNode(NewNode(DIRECT, BIAS))
+
+    // Add the input nodes
+    for i := 0; i < numInput; i++ {
+        network.AddNode(NewNode(DIRECT, INPUT))
+    }
+
+    // Add the hidden nodes
+    for i := 0; i < numHidden; i++ {
+        network.AddNode(NewNode(SIGMOID, HIDDEN))
+    }
+
+    // Add the output nodes
+    for i := 0; i < numOutput; i++ {
+        network.AddNode(NewNode(SIGMOID, OUTPUT))
+    }
+
+    // Node the offsets
+    inputOffset := network.biasCount
+    outputOffset := inputOffset + network.inputCount
+    hiddenOffset := outputOffset + network.outputCount
+
+    // Connect to the input layer to the hidden layer
+    for h := 0; h < network.hiddenCount; h++ {
+
+        // Connect to the bias node
+        network.AddConnection(NewConnection(network.nodes[0], network.nodes[hiddenOffset+h], rand.Float64()*2-1))
+
+        // Connect to the input nodes
+        for i := 0; i < network.inputCount; i++ {
+            network.AddConnection(NewConnection(network.nodes[inputOffset+i], network.nodes[hiddenOffset+h], rand.Float64()*2-1))
+        }
+    }
+
+    // Connect the hidden layer to the output layer
+    for o := 0; o < network.outputCount; o++ {
+
+        // Connect to the bias node
+        network.AddConnection(NewConnection(network.nodes[0], network.nodes[outputOffset+o], rand.Float64()*2-1))
+
+        // Connect to the hidden nodes
+        for h := 0; h < network.hiddenCount; h++ {
+            network.AddConnection(NewConnection(network.nodes[hiddenOffset+h], network.nodes[outputOffset+o], rand.Float64()*2-1))
+        }
+    }
+    // Return the network
+    return network
 }
 
 // Adds a Node to the Network. The nodes are kept loosely sorted in order 
