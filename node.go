@@ -24,6 +24,10 @@ const (
 	STEEPENED_SIGMOID
 )
 
+var (
+	FuncTypes = []FuncType {DIRECT, SIGMOID, STEEPENED_SIGMOID}
+)
+
 // Node interface
 type Node interface {
     Reset()
@@ -93,6 +97,8 @@ func NewNode(funcType FuncType, nodeType NodeType) Node {
         return NewDirectNode(nodeType)
     case SIGMOID:
         return NewSigmoidNode(nodeType)
+	case STEEPENED_SIGMOID:
+		return NewSteepenedSigmoidNode(nodeType)
     }
 
     // Unknown FuncType, return nil
