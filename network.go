@@ -28,7 +28,7 @@ package neural
 
 import (
 	"fmt"
-	"math/rand"
+	"github.com/boggo/random"
 	"sort"
 )
 
@@ -75,11 +75,11 @@ func NewNetwork(numInput, numHidden, numOutput int) *Network {
 	for h := 0; h < network.hiddenCount; h++ {
 
 		// Connect to the bias node
-		network.AddConnection(NewConnection(network.nodes[0], network.nodes[hiddenOffset+h], rand.Float64()*2-1))
+		network.AddConnection(NewConnection(network.nodes[0], network.nodes[hiddenOffset+h], random.Next()*2-1))
 
 		// Connect to the input nodes
 		for i := 0; i < network.inputCount; i++ {
-			network.AddConnection(NewConnection(network.nodes[inputOffset+i], network.nodes[hiddenOffset+h], rand.Float64()*2-1))
+			network.AddConnection(NewConnection(network.nodes[inputOffset+i], network.nodes[hiddenOffset+h], random.Next()*2-1))
 		}
 	}
 
@@ -87,11 +87,11 @@ func NewNetwork(numInput, numHidden, numOutput int) *Network {
 	for o := 0; o < network.outputCount; o++ {
 
 		// Connect to the bias node
-		network.AddConnection(NewConnection(network.nodes[0], network.nodes[outputOffset+o], rand.Float64()*2-1))
+		network.AddConnection(NewConnection(network.nodes[0], network.nodes[outputOffset+o], random.Next()*2-1))
 
 		// Connect to the hidden nodes
 		for h := 0; h < network.hiddenCount; h++ {
-			network.AddConnection(NewConnection(network.nodes[hiddenOffset+h], network.nodes[outputOffset+o], rand.Float64()*2-1))
+			network.AddConnection(NewConnection(network.nodes[hiddenOffset+h], network.nodes[outputOffset+o], random.Next()*2-1))
 		}
 	}
 	// Return the network
@@ -101,6 +101,11 @@ func NewNetwork(numInput, numHidden, numOutput int) *Network {
 // Adds a Node to the Network. The nodes are kept loosely sorted in order
 // of NodeType: Bias, Input, Output, Hidden
 func (n *Network) AddNode(node Node) {
+
+	// Ensure the network has a nodes list
+	if n.nodes == nil {
+		n.nodes = make([]Node, 0, 10)
+	}
 
 	// Add the node to the slice
 	n.nodes = append(n.nodes, node)
@@ -122,6 +127,13 @@ func (n *Network) AddNode(node Node) {
 // Adds a Connection to the Network. Connections should be added in the order
 // in which they should be activated
 func (n *Network) AddConnection(conn Connection) {
+
+	// Ensure the network has a connection list
+	if n.conns == nil {
+		n.conns = make([]Connection, 0, 10)
+	}
+
+	// Add the connection
 	n.conns = append(n.conns, conn)
 }
 

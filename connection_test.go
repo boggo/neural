@@ -27,36 +27,32 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package neural
 
 import (
-	"fmt"
+	. "github.com/smartystreets/goconvey/convey"
+	"testing"
 )
 
-// Connection interface
-type Connection interface {
-	activate()
-}
-
-// Implementation of Connection as a private package struct
-type connection struct {
-	fromNode Node
-	toNode   Node
-	weight   float64
-}
-
-// List of Connections
-type connList []Connection
-
-// Creates a new Connection
-func NewConnection(fromNode Node, toNode Node, weight float64) *connection {
-	return &connection{fromNode, toNode, weight}
-}
-
-// Activates a connection by taking the activation of the source node,
-// multiplying it by the connection weight and combining that with the
-// value of the target node
-func (c *connection) activate() {
-	c.toNode.Combine(c.fromNode.Activate() * c.weight)
-}
-
-func (c *connection) String() string {
-	return fmt.Sprintf("%v, %v, %v", c.weight, c.fromNode.NodeType(), c.toNode.NodeType())
+func TestConnection(t *testing.T) {
+	Convey("Subject: Connection", t, func() {
+		var src, tgt *DirectNode
+		src = NewDirectNode(INPUT)
+		tgt = NewDirectNode(OUTPUT)
+		Convey("Given a new Connection", func() {
+			con := NewConnection(src, tgt, 0.5)
+			Convey("From Node should equal Source", func() {
+				So(con.fromNode, ShouldEqual, src)
+			})
+			Convey("To Node should equal Target", func() {
+				So(con.toNode, ShouldEqual, tgt)
+			})
+			Convey("Weight should be set correctly", func() {
+				So(con.weight, ShouldEqual, 0.5)
+			})
+			Convey("Activation should work correctly", func() {
+				src.input = 0.5
+				con.weight = 0.5
+				con.activate()
+				So(tgt.input, ShouldEqual, 0.25)
+			})
+		})
+	})
 }

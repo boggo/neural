@@ -84,6 +84,13 @@ type node struct {
 	funcType FuncType
 }
 
+func newNode(nodeType NodeType, funcType FuncType) node {
+	n := node{nodeType: nodeType, funcType: funcType}
+	if nodeType == BIAS {
+		n.input = 1.0
+	}
+	return n
+}
 func (n node) String() string {
 	var ntype, ftype string
 	switch n.nodeType {
@@ -169,7 +176,7 @@ type DirectNode struct {
 
 // NewDirectNode returns a pointer to a new DirectNode
 func NewDirectNode(nodeType NodeType) *DirectNode {
-	return &DirectNode{node{nodeType: nodeType, funcType: DIRECT}}
+	return &DirectNode{node: newNode(nodeType, DIRECT)}
 }
 
 // Activate returns the input value without transformation
@@ -185,7 +192,7 @@ type SigmoidNode struct {
 
 // NewSigmoidNode returns a pointer to a new Sigmoid Node
 func NewSigmoidNode(nodeType NodeType) *SigmoidNode {
-	return &SigmoidNode{node{nodeType: nodeType, funcType: SIGMOID}}
+	return &SigmoidNode{node: newNode(nodeType, SIGMOID)}
 }
 
 // Activate returns the input value transformed by the Sigmoid function:
@@ -205,7 +212,7 @@ type SteepenedSigmoidNode struct {
 
 // NewSigmoidNode returns a pointer to a new Sigmoid Node
 func NewSteepenedSigmoidNode(nodeType NodeType) *SteepenedSigmoidNode {
-	return &SteepenedSigmoidNode{node{nodeType: nodeType, funcType: STEEPENED_SIGMOID}}
+	return &SteepenedSigmoidNode{node: newNode(nodeType, STEEPENED_SIGMOID)}
 }
 
 // Activate returns the input value transformed by the Sigmoid function:
